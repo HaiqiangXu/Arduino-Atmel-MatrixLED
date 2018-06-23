@@ -1,26 +1,19 @@
 #include "MD_MAX72xx.h"
 #include "TrueRandom.h"
 #include "CCommon.h"
+#include "CLedEyes.h"
 
 const int IN_BTN = 2;
 const int DELAYTIME = 100;  // in milliseconds
-const int MAX_FRAMES = 4;
-const uint8_t PROGMEM pacman[MAX_FRAMES][18] =  // ghost pursued by a pacman. Matrix of 4 rows * 18 cols
-{
-    { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0x7e, 0xff, 0xe7, 0xc3, 0x81, 0x00 },
-    { 0xfe, 0x7b, 0xf3, 0x7f, 0xfb, 0x73, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xe7, 0xe7, 0x42, 0x00 },
-    { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xe7, 0x66, 0x24 },
-    { 0xfe, 0x7b, 0xf3, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xff, 0x7e, 0x3c },
-};
-const uint8_t DATA_WIDTH = (sizeof(pacman[0]) / sizeof(pacman[0][0]));
+const char TEXT[] = "Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas Letraset, las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.";
 
-enum class EMarqueeStyle { Test, Text, Pacman, BlinkEyes, Shift };
+enum class EMarqueeStyle { Test, Text, Pacman, BlinkEyes };
 
 class CLedMarquee
 {
 public:
     // Constructors
-    CLedMarquee(int csPin, int iNumDevices)
+    CLedMarquee(int csPin, int iNumDevices, EMarqueeStyle style)
     {
         // initialize devices and variables
         pinMode(IN_BTN, INPUT_PULLUP);
@@ -29,13 +22,19 @@ public:
         /* Default library's values: control(MD_MAX72XX::INTENSITY, MAX_INTENSITY / 2);
     Half intensity and auto-update:  control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);       */
         m_leds->control(MD_MAX72XX::INTENSITY, MAX_INTENSITY / 4);
-
-        m_currentMarquee = EMarqueeStyle::Text;
         m_iNumDevices = iNumDevices;
+
+        m_currentMarquee = style;
+        if (m_currentMarquee == EMarqueeStyle::BlinkEyes ||
+            m_currentMarquee == EMarqueeStyle::Text)
+        {
+            m_eyes = new CLedEyes();
+            m_eyes->begin(m_leds);
+        }
     };
 
     // Public methods
-    void ShowMarquee(EMarqueeStyle style);
+    void ShowMarquee();
 
     // Data accessors
 	int GetDevices()
@@ -45,13 +44,16 @@ public:
 private:
     // Fields
     MD_MAX72XX* m_leds;
+    CLedEyes* m_eyes;
     EMarqueeStyle m_currentMarquee;
     int m_iNumDevices;
     
     // Private methods
-    void Test();
-    void TestAdvanced();
-    void TestTransformations();
+    void TestsOneDevice();
+    void TestsAdvanced();
+    void TestsTransformations();
     void Shift();
-    void ShiftTransform(MD_MAX72XX::transformType_t tt, bool bNew);
+    void ScrollText();
+    void ShowPacman();
+    void BlinkEyes();
 };

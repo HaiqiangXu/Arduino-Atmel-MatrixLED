@@ -7,17 +7,16 @@ Software for Arduino Uno/Nano to control 8x8 dot matrix LED based on MAX7219 ICs
 ## Features
 - Configurable matrix size by attaching multiple LED Matrixes
 - Configurable marquees and animations to display
-- Interactive games through joystick
+- Interactive games through joystick: Tetris and Snake
 
 ### Hardware components used for Led Cube
 
-- Arduino [Nano](https://store.arduino.cc/arduino-nano) or compatible
+- Arduino [Uno](https://store.arduino.cc/arduino-uno-rev3)/[Nano](https://store.arduino.cc/arduino-nano) or compatible
 - 8x8 dot matrix LEDs model 1088AS with MAX7219 in [FC-16](https://majicdesigns.github.io/MD_MAX72XX/page_f_c16.html) boards
 - Battery or powerbank [ 5V,  +2200 mAh ]
 - Optional joystick analog 2-Axis with button for interactive games
 - Optional switch button
 - Optional dip switch to turn on/off the cube
-- Matrix structure, up to your imagination
 
 ### Software structure
 
