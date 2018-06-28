@@ -455,9 +455,9 @@ void CLedMarquee::TestsTransformations()
     // }
 }
 
-void ShowPacman()
+void CLedMarquee::ShowPacman()
 {
-    //TODO: fix Pacman animation
+    //TODO: fix Pacman animation -> try to use the animation engine of CLedEyes engine.
     // int idx;                        // display index (column)
     // int frame;                      // current animation frame
     // int deltaFrame; 
@@ -534,8 +534,60 @@ void CLedMarquee::Shift()
 
 void CLedMarquee::ScrollText()
 {
-    m_eyes->setText(TEXT);
-    m_eyes->runAnimation();
+    static enum { S_LOAD,
+                  S_SHOW,
+                  S_SPACE } state = S_LOAD;
+    static uint8_t curLen, showLen;
+    static uint8_t cBuf[COL_SIZE];
+
+    // if (bInit)
+    // {
+    //     m_leds->clear();
+    //     state = S_LOAD;
+    // }
+
+    // Now scroll the text
+    m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF); // start manual control
+    m_leds->transform(MD_MAX72XX::TSL);                   // scroll along all devices
+
+    // Now work out what's next using finite state machine to control what we do
+    switch (state)
+    {
+        case S_LOAD: // Load the next character from the font table
+            // if we reached end of message or empty string, reset the message pointer
+            if (*m_msgText == '\0')
+            {
+                m_msgText = nullptr;
+                break;
+            }
+
+            // otherwise load the character
+            showLen = m_leds->getChar(*m_msgText++, ARRAY_SIZE(cBuf), cBuf);
+            curLen = 0;
+            state = S_SHOW;
+            // fall through to the next state
+
+        case S_SHOW: // display the next part of the character
+            m_leds->setColumn(0, 0, cBuf[curLen++]);
+            if (curLen == showLen)
+            {
+                showLen = (*m_msgText == '\0' ? 2 * COL_SIZE : 1); // either 1 space or pad to the end of the display if finished
+                curLen = 0;
+                state = S_SPACE;
+            }
+            break;
+
+        case S_SPACE: // display inter-character spacing (blank columns)
+            m_leds->setColumn(0, 0, 0);
+            curLen++;
+            if (curLen >= showLen)
+                state = S_LOAD;
+            break;
+
+        default:
+            state = S_LOAD;
+    }
+    m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
     delay(DELAYTIME * 3);
 }
 
@@ -544,13 +596,13 @@ void CLedMarquee::BlinkEyes()
     typedef struct
     {
         char name[7];
-        CLedEyes::emotion_t e;
+        CLedEyes::emotion_t emotion;
         uint16_t timePause;  // in milliseconds
     } sampleItem_t;
 
     const sampleItem_t eSeq[] =
     {
-        { "Nutral", CLedEyes::E_NEUTRAL, 20000 },
+        { "Neutral", CLedEyes::E_NEUTRAL, 20000 },
         { "Blink" , CLedEyes::E_BLINK, 1000 },
         { "Wink"  , CLedEyes::E_WINK, 1000 },
         { "Left"  , CLedEyes::E_LOOK_L, 1000 },
@@ -566,9 +618,11 @@ void CLedMarquee::BlinkEyes()
         { "ScanV" , CLedEyes::E_SCAN_UD, 1000 },
         { "ScanH" , CLedEyes::E_SCAN_LR, 1000 },
     };
+    static enum { S_IDLE,
+                  S_ANIM,
+                  S_PAUSE } state = S_IDLE;
     static uint32_t timeStartDelay;
     static uint8_t index = ARRAY_SIZE(eSeq);
-    static enum { S_IDLE, S_TEXT, S_ANIM, S_PAUSE } state = S_IDLE;
 
     bool b = m_eyes->runAnimation();    // always run the animation
     switch (state)
@@ -577,27 +631,20 @@ void CLedMarquee::BlinkEyes()
             index++;
             if (index >= ARRAY_SIZE(eSeq)) 
                 index = 0;
-            m_eyes->setText(eSeq[index].name);
-            state = S_TEXT;
+            //change emotion each time previous one has finished    
+            m_eyes->setAnimation(eSeq[index].emotion, true);
+            state = S_ANIM;
             break;
 
-        case S_TEXT: // wait for the text to finish
-            if (b)  // text animation is finished
-            {
-                m_eyes->setAnimation(eSeq[index].e, true);
-                state = S_ANIM;
-            }
-            break;
-
-        case S_ANIM:  // checking animation is completed
-            if (b)  // animation is finished
+        case S_ANIM:    // checking animation is completed
+            if (b)      // animation is finished
             {
                 timeStartDelay = millis();
                 state = S_PAUSE;
             }
             break;
 
-        case S_PAUSE: // non blocking waiting for a period between animations
+        case S_PAUSE:   // non blocking waiting for a period between animations
             if (millis() - timeStartDelay >= eSeq[index].timePause)
                 state = S_IDLE;
             break;

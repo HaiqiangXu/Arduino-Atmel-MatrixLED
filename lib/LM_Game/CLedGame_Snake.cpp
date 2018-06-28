@@ -1,7 +1,12 @@
 #include "CLedGame.h"
 
-// Private methods
-void CLedGame::GameSnake()
+// Protected methods
+void CLedGameSnake::RefreshAnimation()
+{
+
+}
+
+void CLedGameSnake::GameCalculate()
 {
 
 }
