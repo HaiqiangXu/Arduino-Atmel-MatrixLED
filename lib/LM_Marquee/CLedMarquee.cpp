@@ -23,7 +23,7 @@ void CLedMarquee::ShowMarquee()
             break;
 
         case EMarqueeStyle::BlinkEyes:
-            // limited to 2 devices
+            // limited to first 2 devices
             this->BlinkEyes();
             break;
 
@@ -49,7 +49,7 @@ void CLedMarquee::TestsOneDevice()
         m_leds->setPoint(i, 0, true);
         m_leds->setPoint(i, ROW_SIZE - i, true);
         m_leds->setPoint(ROW_SIZE - i, i, true);
-        Common.Sleep(DELAYTIME);
+        delay(DELAYTIME);
     }
 
     /// Demonstrate the use of drawHLine(). Another way of drawing a line different to setRow()/setColumn().
@@ -457,53 +457,57 @@ void CLedMarquee::TestsTransformations()
 
 void CLedMarquee::ShowPacman()
 {
-    //TODO: fix Pacman animation -> try to use the animation engine of CLedEyes engine.
-    // int idx;                        // display index (column)
-    // int frame;                      // current animation frame
-    // int deltaFrame; 
-    // const int MAX_FRAMES = 4;
-    // const uint8_t PROGMEM pacman[MAX_FRAMES][18] =  // ghost pursued by a pacman. Matrix of 4 rows * 18 cols
-    // {
-    //     { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0x7e, 0xff, 0xe7, 0xc3, 0x81, 0x00 },
-    //     { 0xfe, 0x7b, 0xf3, 0x7f, 0xfb, 0x73, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xe7, 0xe7, 0x42, 0x00 },
-    //     { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xe7, 0x66, 0x24 },
-    //     { 0xfe, 0x7b, 0xf3, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xff, 0x7e, 0x3c },
-    // };
-    // const uint8_t DATA_WIDTH = (sizeof(pacman[0]) / sizeof(pacman[0][0]));
+    //TODO: try to use the animation engine of CLedEyes engine.
+    static int idx;                        // display index (column)
+    static int frame;                      // current animation frame
+    static int deltaFrame; 
+    static boolean bInit = true;
+    const int MAX_FRAMES = 4;
+    const uint8_t PROGMEM pacman[MAX_FRAMES][18] =  // ghost pursued by a pacman. Matrix of 4 rows * 18 cols
+    {
+        { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0x7e, 0xff, 0xe7, 0xc3, 0x81, 0x00 },
+        { 0xfe, 0x7b, 0xf3, 0x7f, 0xfb, 0x73, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xe7, 0xe7, 0x42, 0x00 },
+        { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xe7, 0x66, 0x24 },
+        { 0xfe, 0x7b, 0xf3, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xff, 0x7e, 0x3c },
+    };
+    const uint8_t DATA_WIDTH = (sizeof(pacman[0]) / sizeof(pacman[0][0]));
 
-    // m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
-    // // Initialise
-    // m_leds->clear();
-    // idx = -DATA_WIDTH;
-    // frame = 0;
-    // deltaFrame = 1;
+    m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
+    // Initialise
+    if (bInit)
+    {
+        m_leds->clear();
+        idx = -DATA_WIDTH;
+        frame = 0;
+        deltaFrame = 1;
+        bInit = false;
 
-    // // Lay out the dots
-    // for (uint8_t i = 0; i < m_iNumDevices; i++)
-    // {
-    //     m_leds->setPoint(3, (i * COL_SIZE) + 3, true);
-    //     m_leds->setPoint(4, (i * COL_SIZE) + 3, true);
-    //     m_leds->setPoint(3, (i * COL_SIZE) + 4, true);
-    //     m_leds->setPoint(4, (i * COL_SIZE) + 4, true);
-    // }
+        // Lay out the dots
+        for (uint8_t i = 0; i < m_iNumDevices; i++)
+        {
+            m_leds->setPoint(3, (i * COL_SIZE) + 3, true);
+            m_leds->setPoint(4, (i * COL_SIZE) + 3, true);
+            m_leds->setPoint(3, (i * COL_SIZE) + 4, true);
+            m_leds->setPoint(4, (i * COL_SIZE) + 4, true);
+        }
+    }
 
-    // // clear old graphic
-    // for (uint8_t i = 0; i < DATA_WIDTH; i++)
-    //     m_leds->setColumn(idx - DATA_WIDTH + i, 0);
-    // // move reference column and draw new graphic
-    // idx++;
-    // for (uint8_t i = 0; i < DATA_WIDTH; i++)
-    //     m_leds->setColumn(idx - DATA_WIDTH + i, pacman[frame][i]);
+    // clear old graphic
+    for (uint8_t i = 0; i < DATA_WIDTH; i++)
+        m_leds->setColumn(idx - DATA_WIDTH + i, 0);
+    // move reference column and draw new graphic
+    idx++;
+    for (uint8_t i = 0; i < DATA_WIDTH; i++)
+        m_leds->setColumn(idx - DATA_WIDTH + i, pacman[frame][i]);
+    // advance the animation frame
+    frame += deltaFrame;
+    if (frame == 0 || frame == MAX_FRAMES - 1)
+        deltaFrame = -deltaFrame;
 
-    // // advance the animation frame
-    // frame += deltaFrame;
-    // if (frame == 0 || frame == MAX_FRAMES - 1)
-    //     deltaFrame = -deltaFrame;
-
-    // // check if we are completed and set initialise for next time around
-    // //bInit = (idx == m_leds->getColumnCount() + DATA_WIDTH);
-    // m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-    // delay(75);
+    // check if we are completed and set initialise for next time around
+    bInit = (idx == m_leds->getColumnCount() + DATA_WIDTH);
+    m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
+    delay(100);
 }
 
 void CLedMarquee::Shift()
@@ -540,12 +544,6 @@ void CLedMarquee::ScrollText()
     static uint8_t curLen, showLen;
     static uint8_t cBuf[COL_SIZE];
 
-    // if (bInit)
-    // {
-    //     m_leds->clear();
-    //     state = S_LOAD;
-    // }
-
     // Now scroll the text
     m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF); // start manual control
     m_leds->transform(MD_MAX72XX::TSL);                   // scroll along all devices
@@ -553,16 +551,21 @@ void CLedMarquee::ScrollText()
     // Now work out what's next using finite state machine to control what we do
     switch (state)
     {
-        case S_LOAD: // Load the next character from the font table
-            // if we reached end of message or empty string, reset the message pointer
+        case S_LOAD: // Load the next character from the font table. To set new String, use SetTextToScroll() method
+            // if we reached end of message or empty string, reset showing message pointer
             if (*m_msgText == '\0')
             {
-                m_msgText = nullptr;
+                m_msgText = m_msgTextIni;
+                m_leds->clear(0);   //clears garbage previous to first char. Using clear() removes also last 2 chars of the message
                 break;
             }
 
-            // otherwise load the character
+            // otherwise load next character
             showLen = m_leds->getChar(*m_msgText++, ARRAY_SIZE(cBuf), cBuf);
+#ifdef DEBUG
+Serial.print("Next char: ");
+Serial.println(m_msgText);
+#endif
             curLen = 0;
             state = S_SHOW;
             // fall through to the next state
@@ -582,13 +585,18 @@ void CLedMarquee::ScrollText()
             curLen++;
             if (curLen >= showLen)
                 state = S_LOAD;
+#ifdef DEBUG
+Serial.print("space...");
+if (curLen >= showLen)
+    Serial.println("---");
+#endif                
             break;
 
         default:
             state = S_LOAD;
     }
     m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-    delay(DELAYTIME * 3);
+    delay(DELAYTIME * 2);
 }
 
 void CLedMarquee::BlinkEyes()

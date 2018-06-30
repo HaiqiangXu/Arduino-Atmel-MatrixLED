@@ -1,6 +1,4 @@
 #include "MD_MAX72xx.h"
-#include "TrueRandom.h"
-#include "CCommon.h"
 #include "CLedEyes.h"
 
 const int IN_BTN = 2;
@@ -12,7 +10,7 @@ class CLedMarquee
 {
 public:
     // Constructors
-    CLedMarquee(int csPin, int iNumDevices, EMarqueeStyle style)
+    CLedMarquee(int csPin, int iNumDevices, EMarqueeStyle marquee)
     {
         // initialize devices and variables
         pinMode(IN_BTN, INPUT_PULLUP);
@@ -23,13 +21,13 @@ public:
         m_leds->control(MD_MAX72XX::INTENSITY, MAX_INTENSITY / 4);
         m_iNumDevices = iNumDevices;
 
-        m_currentMarquee = style;
-        if (m_currentMarquee == EMarqueeStyle::BlinkEyes ||
-            m_currentMarquee == EMarqueeStyle::Text)
+        m_currentMarquee = marquee;
+        if (m_currentMarquee == EMarqueeStyle::BlinkEyes)
         {
+            //use extra class for marquee BlinkEyes
             m_eyes = new CLedEyes();
             m_eyes->begin(m_leds);
-        }
+        }      
     };
 
     // Public methods
@@ -41,9 +39,16 @@ public:
 		return m_iNumDevices;
 	};
 
-    void SetTextToScroll(const char* text)
+    EMarqueeStyle GetMarquee()
     {
-        strcpy(m_msgText, text);
+        return m_currentMarquee;
+    };
+
+    void SetText(const char* text)
+    {
+        ///strcpy(m_msgText, text);     //NOTE: m_msgText is a pointer, not a char array with info so strcpy() is not copying
+        m_msgText = text;
+        m_msgTextIni = text;
     };
 private:
     // Fields
@@ -52,6 +57,7 @@ private:
     EMarqueeStyle m_currentMarquee;
     int m_iNumDevices;
     char* m_msgText;
+    char* m_msgTextIni;     //don't put this variable in the same line with previous variable, makes unexpected behavior
     
     // Private methods
     void TestsOneDevice();
