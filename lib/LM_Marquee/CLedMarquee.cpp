@@ -12,6 +12,7 @@ void CLedMarquee::ShowMarquee()
             TestsAdvanced();
             TestsTransformations();
             Shift();
+            delay(DELAYTIME * 5);
             break;
 
         case EMarqueeStyle::Text:
@@ -129,7 +130,7 @@ void CLedMarquee::TestsAdvanced()
             m_leds->setColumn(j, i, 0xff);
             m_leds->setRow(j, i, 0xff);
         }
-        m_leds->update();               // update manually as control(MD_MAX72XX::UPDATE) is switched off
+        m_leds->update();               // update manually all devices as control(MD_MAX72XX::UPDATE) is switched off
         delay(2 * DELAYTIME);
         for (j = 0; j < m_iNumDevices; j++)
         {
@@ -294,7 +295,7 @@ void CLedMarquee::TestsAdvanced()
         r += dR;
         c += dC;
         m_leds->setPoint(r, c, true);
-        delay(DELAYTIME/2);
+        delay(DELAYTIME / 2);
 
         if ((r == 0) || (r == ROW_SIZE - 1))
             dR = -dR;
@@ -442,7 +443,6 @@ void CLedMarquee::TestsTransformations()
 
     // // draw something that will show changes
     // m_leds->clear();
-    // m_leds->control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::OFF);
     // for (i = 0; i < m_leds->getDeviceCount(); i++)
     //     m_leds->setChar(((i + 1) * COL_SIZE) - 1, '0' + i);
     // delay(DELAYTIME * 5);
@@ -507,7 +507,7 @@ void CLedMarquee::ShowPacman()
     // check if we are completed and set initialise for next time around
     bInit = (idx == m_leds->getColumnCount() + DATA_WIDTH);
     m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-    delay(100);
+    delay(DELAYTIME);
 }
 
 void CLedMarquee::Shift()
@@ -534,6 +534,7 @@ void CLedMarquee::Shift()
         }
         delay(DELAYTIME * 4);
     }
+    m_leds->control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::OFF);
 }
 
 void CLedMarquee::ScrollText()
@@ -551,12 +552,12 @@ void CLedMarquee::ScrollText()
     // Now work out what's next using finite state machine to control what we do
     switch (state)
     {
-        case S_LOAD: // Load the next character from the font table. To set new String, use SetTextToScroll() method
+        case S_LOAD: // Load the next character from the font table. To set new String, use SetText() method
             // if we reached end of message or empty string, reset showing message pointer
             if (*m_msgText == '\0')
             {
                 m_msgText = m_msgTextIni;
-                m_leds->clear(0);   //clears garbage previous to first char. Using clear() removes also last 2 chars of the message
+                m_leds->clear(0);   //clears garbage previous to first char. Using clear() removes also last 2 chars of the message in device 0 only
                 break;
             }
 
@@ -596,7 +597,7 @@ if (curLen >= showLen)
             state = S_LOAD;
     }
     m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-    delay(DELAYTIME * 2);
+    delay(DELAYTIME);
 }
 
 void CLedMarquee::BlinkEyes()

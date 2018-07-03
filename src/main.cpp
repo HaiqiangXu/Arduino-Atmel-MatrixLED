@@ -37,7 +37,7 @@ void setup()
 #endif
 
     //Available EMarqueeStyle:   Test  ,  Pacman  ,  Text  ,  BlinkEyes
-    m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Pacman);
+    m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Test);
     if (m_leds->GetMarquee() == EMarqueeStyle::Text)
         m_leds->SetText(TEXT);
     #endif
@@ -49,8 +49,5 @@ void loop()
     m_leds->StartGame();
     #elif MARQUEE
     m_leds->ShowMarquee();
-    //NOTE: Only Test needs this delay. The rest uses their own delay inside them
-    if (m_leds->GetMarquee() == EMarqueeStyle::Test)
-        delay(500);
     #endif
 }

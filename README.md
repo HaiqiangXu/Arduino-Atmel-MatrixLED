@@ -31,9 +31,12 @@ Arduino-Matrix-LED
 |  |  |- CLedGame_Snake.cpp
 |  |  |- CLedGame.cpp
 |  |  |- CLedGame.h
+|  |  |- CLedGameController.h
 |  |--LM_Marquee
 |  |  |- CLedMarquee.cpp
 |  |  |- CLedMarquee.h
+|  |  |- CLedEyes.cpp
+|  |  |- CLedEyes.h
 |  |--LM_WeatherStation
 |  |  |- CLedWeather.cpp
 |  |  |- CLedWeather.h

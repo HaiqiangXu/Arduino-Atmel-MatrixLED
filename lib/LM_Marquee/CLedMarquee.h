@@ -56,9 +56,8 @@ private:
     CLedEyes* m_eyes;
     EMarqueeStyle m_currentMarquee;
     int m_iNumDevices;
-    char* m_msgText;
-    char* m_msgTextIni;     //don't put this variable in the same line with previous variable, makes unexpected behavior
-    
+    const char* m_msgText, *m_msgTextIni;
+
     // Private methods
     void TestsOneDevice();
     void TestsAdvanced();
