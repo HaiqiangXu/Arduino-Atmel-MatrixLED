@@ -23,31 +23,42 @@ CLedMarquee* m_leds;
 
 void setup()
 {
-    #ifdef GAME
-#ifdef DEBUG
-    Serial.begin(9600);
-    Serial.println("Debugging LM Game");
-#endif
-
-    m_leds = new CLedGameController(CS_PIN, NUM_DEVICES, IN_AXIS_X, IN_AXIS_Y, IN_BUTTON, EGame::Tetris);
-    #elif MARQUEE
-#ifdef DEBUG
-    Serial.begin(9600);
-    Serial.println("Debugging LM Marquee");
-#endif
-
-    //Available EMarqueeStyle:   Test  ,  Pacman  ,  Text  ,  BlinkEyes
-    m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Test);
-    if (m_leds->GetMarquee() == EMarqueeStyle::Text)
-        m_leds->SetText(TEXT);
+#ifdef GAME
+    #ifdef DEBUG
+        Serial.begin(9600);
+        Serial.println("Debugging LM Game");
     #endif
+
+    #ifdef GAME_TETRIS    
+        m_leds = new CLedGameController(CS_PIN, NUM_DEVICES, IN_AXIS_X, IN_AXIS_Y, IN_BUTTON, EGame::Tetris);
+    #elif GAME_SNAKE
+        m_leds = new CLedGameController(CS_PIN, NUM_DEVICES, IN_AXIS_X, IN_AXIS_Y, IN_BUTTON, EGame::Snake);
+    #endif
+
+#elif MARQUEE
+    #ifdef DEBUG
+        Serial.begin(9600);
+        Serial.println("Debugging LM Marquee");
+    #endif
+
+    #ifdef MARQUEE_TEST
+        m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Test);
+    #elif MARQUEE_TEXT
+        m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Text);
+        m_leds->SetText(TEXT);
+    #elif MARQUEE_PACMAN
+        m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Pacman);
+    #elif MARQUEE_BLINK_EYES
+        m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::BlinkEyes);
+    #endif
+#endif
 }
 
 void loop()
 {
-    #ifdef GAME
+#ifdef GAME
     m_leds->StartGame();
-    #elif MARQUEE
+#elif MARQUEE
     m_leds->ShowMarquee();
-    #endif
+#endif
 }

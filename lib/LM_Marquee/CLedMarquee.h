@@ -1,4 +1,3 @@
-#include "MD_MAX72xx.h"
 #include "CLedEyes.h"
 
 const int IN_BTN = 2;

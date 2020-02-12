@@ -10,9 +10,13 @@ public:
     {
         m_currentGame = newGame;
         if (newGame == EGame::Tetris)
+        {
             m_ledGame = new CLedGameTetris(csPin, iNumDevices, iPinAxisX, iPinAxisY, iPinButton);
+        }
         else if (newGame == EGame::Snake)
+        {
             m_ledGame = new CLedGameSnake(csPin, iNumDevices, iPinAxisX, iPinAxisY, iPinButton);
+        }
     };
 
     // Public methods  
