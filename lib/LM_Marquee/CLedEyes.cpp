@@ -1,5 +1,4 @@
 #include "CLedEyes.h"
-#include "CLedEyesData.h"
 
 #pragma region Public methods
 
@@ -101,9 +100,9 @@ bool CLedEyes::runAnimation(void)
 void CLedEyes::loadEye(uint8_t module, uint8_t ch)
 {
     uint8_t buf[EYE_COL_SIZE];
-    uint8_t size;
+    /*uint8_t size;
 
-    size = m_leds->getChar(ch, EYE_COL_SIZE, buf);
+    size = */ m_leds->getChar(ch, EYE_COL_SIZE, buf);
     for (uint8_t i = 0; i < EYE_COL_SIZE; i++)
     {
         m_leds->setColumn(module, i, buf[i]);

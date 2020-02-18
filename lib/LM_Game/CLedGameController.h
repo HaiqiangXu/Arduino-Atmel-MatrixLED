@@ -6,7 +6,7 @@ class CLedGameController
 {
 public:
     // Constructors
-    CLedGameController(int csPin, int iNumDevices, int iPinAxisX, int iPinAxisY, int iPinButton, EGame newGame)
+    CLedGameController(uint8_t csPin, uint8_t iNumDevices, uint8_t iPinAxisX, uint8_t iPinAxisY, uint8_t iPinButton, EGame newGame)
     {
         m_currentGame = newGame;
         if (newGame == EGame::Tetris)

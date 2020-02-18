@@ -6,7 +6,7 @@ void CLedGame::StartGame()
 {
     ReadUserControls();
 
-    // make movement only if Joystick has moved
+    // consider idle if Joystick hasn't moved to call Power Down. Wake it up if Joystick button is pressed
     if (m_joystick->GetDirectionX() != EDirection::None ||
         m_joystick->GetDirectionY() != EDirection::None ||
         m_iButtonZ == LOW)

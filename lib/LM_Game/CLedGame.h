@@ -10,7 +10,7 @@ enum class EState { S_LOAD, S_SHOW, S_CALCULATE };
 class CLedGame
 {
 public:
-    CLedGame(int csPin, int iNumDevices, int iPinAxisX, int iPinAxisY, int iPinButton)
+    CLedGame(uint8_t csPin, uint8_t iNumDevices, uint8_t iPinAxisX, uint8_t iPinAxisY, uint8_t iPinButton)
     {
         // initialize variables
         m_leds = new MD_MAX72XX(csPin, iNumDevices);
@@ -27,7 +27,7 @@ public:
     void StartGame();
 
     // Data accessors
-	int GetNumDevices()
+	uint8_t GetNumDevices()
 	{
 		return m_iNumDevices;
 	};
@@ -35,23 +35,23 @@ protected:
     // Fields
     MD_MAX72XX* m_leds;
     CJoystick* m_joystick;
-    int m_iNumDevices;          //number of Matrix leds attached
+    uint8_t m_iNumDevices;
     EDirection m_lastDirectionX, m_lastDirectionY;
     int m_iButtonZ;
-    int m_iCurrentLevel;
+    uint8_t m_iCurrentLevel;
     unsigned long m_lLastTime;
 
     // Protected methods
     void ReadUserControls();
-    virtual void RefreshAnimation() = 0;   //pure virtual function -> to be defined in the derived classes
+    virtual void RefreshAnimation() = 0;   //pure virtual function -> to be implemented in the derived classes
     virtual void GameCalculate() = 0;
 };
 
-// derived class for Tetris game
+// derived class for Tetris game. Complete CLedGame_Tetris.cpp by adding remaining methods RefreshAnimation() and GameCalculate()
 class CLedGameTetris : public CLedGame
 {
 public:
-    CLedGameTetris(int csPin, int iNumDevices, int iPinAxisX, int iPinAxisY, int iPinButton) : CLedGame(csPin, iNumDevices, iPinAxisX, iPinAxisY, iPinButton)
+    CLedGameTetris(uint8_t csPin, uint8_t iNumDevices, uint8_t iPinAxisX, uint8_t iPinAxisY, uint8_t iPinButton) : CLedGame(csPin, iNumDevices, iPinAxisX, iPinAxisY, iPinButton)
     {
         m_leds->setBuffer(1, sizeof(Pieces[0]), Pieces[0]);
         m_leds->setBuffer(4, sizeof(Pieces[0]), Pieces[1]);
@@ -83,14 +83,13 @@ private:
     // private methods
     virtual void RefreshAnimation();
     virtual void GameCalculate();
-
 };
 
-// derived class for Snake game
+// derived class for Snake game. Finish CLedGame_Snake.cpp by adding remaining methods RefreshAnimation() and GameCalculate()
 class CLedGameSnake : public CLedGame
 {
 public:
-    CLedGameSnake(int csPin, int iNumDevices, int iPinAxisX, int iPinAxisY, int iPinButton) : CLedGame(csPin, iNumDevices, iPinAxisX, iPinAxisY, iPinButton)
+    CLedGameSnake(uint8_t csPin, uint8_t iNumDevices, uint8_t iPinAxisX, uint8_t iPinAxisY, uint8_t iPinButton) : CLedGame(csPin, iNumDevices, iPinAxisX, iPinAxisY, iPinButton)
     { };
 
 private:    

@@ -3,16 +3,16 @@
 #include <CJoystick.h>
 
 //TODO: made these constants parameters of the constructors and set in the main.cpp instead of here
-const int IN_AXIS_X = 17;   //A3
-const int IN_AXIS_Y = 18;   //A4
-const int IN_BUTTON = 2;
+const uint8_t IN_AXIS_X = 17;   //A3
+const uint8_t IN_AXIS_Y = 18;   //A4
+const uint8_t IN_BUTTON = 2;
 const unsigned long TIME_TO_POWER_DOWN = 60000;     //1 minute
 
 class CLedWeather
 {
 public:
     // Constructors
-    CLedWeather(int csPin, int iNumDevices, int iPinAxisX, int iPinAxisY, int iPinButton)
+    CLedWeather(uint8_t csPin, uint8_t iNumDevices, uint8_t iPinAxisX, uint8_t iPinAxisY, uint8_t iPinButton)
     {
         // initialize variables
         m_leds = new MD_MAX72XX(csPin, iNumDevices);
@@ -24,7 +24,7 @@ public:
     };
 
     // Data accessors
-	int GetNumDevices()
+	uint8_t GetNumDevices()
 	{
 		return m_iNumDevices;
 	};
@@ -33,7 +33,7 @@ private:
     // Fields
     MD_MAX72XX* m_leds;
     CJoystick* m_joystick;
-    int m_iNumDevices;          //number of Matrix leds attached
+    uint8_t m_iNumDevices;
     unsigned long m_lLastTime;
 
     // Private methods

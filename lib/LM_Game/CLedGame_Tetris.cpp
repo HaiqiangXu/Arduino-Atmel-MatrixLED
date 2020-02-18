@@ -28,7 +28,7 @@ void CLedGameTetris::GameCalculate()
 {
     if (m_state == EState::S_LOAD)
     {
-        uint16_t index = TrueRandom.random(7);
+        //uint16_t index = TrueRandom.random(7);
         // if (index == 7)
         //     m_currentPiece = &Pieces[index];         //TODO: set to m_leds->setBuffer()
         // else
