@@ -4,8 +4,6 @@
 
 void CLedGame::StartGame()
 {
-    ReadUserControls();
-
     // consider idle if Joystick hasn't moved to call Power Down. Wake it up if Joystick button is pressed
     if (m_joystick->GetDirectionX() != EDirection::None ||
         m_joystick->GetDirectionY() != EDirection::None ||
@@ -15,8 +13,9 @@ void CLedGame::StartGame()
         m_lLastTime = millis();
     }
     
-    //show animations and calculate game mechanics
+    //show animation, read user movement with joystick and calculate game mechanics for next animation iteration
     this->RefreshAnimation();
+    ReadUserControls();
     this->GameCalculate();
 
     // check if enter Power Down to save battery

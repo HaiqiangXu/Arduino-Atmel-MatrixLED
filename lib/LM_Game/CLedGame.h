@@ -1,9 +1,11 @@
+#include <LinkedList.h>
 #include <MD_MAX72xx.h>
 #include <TrueRandom.h>
 #include <CCommon.h>
 #include <CJoystick.h>
 
 const unsigned long TIME_TO_POWER_DOWN = 60000;     //1 minute
+const uint8_t MAX_SNAKE_LENGTH = 16;
 enum class EState { S_LOAD, S_SHOW, S_CALCULATE };
 
 // abstract base class
@@ -15,7 +17,7 @@ public:
         // initialize variables
         m_leds = new MD_MAX72XX(csPin, iNumDevices);
         m_leds->begin();
-        m_leds->control(MD_MAX72XX::INTENSITY, MAX_INTENSITY / 4);
+        m_leds->control(MD_MAX72XX::INTENSITY, MAX_INTENSITY >> 4);
         m_iNumDevices = iNumDevices;
 
         m_joystick = new CJoystick(iPinAxisX, iPinAxisY, iPinButton);
@@ -36,7 +38,7 @@ protected:
     MD_MAX72XX* m_leds;
     CJoystick* m_joystick;
     uint8_t m_iNumDevices;
-    EDirection m_lastDirectionX, m_lastDirectionY;
+    EDirection m_lastDirectionX, m_lastDirectionY, m_lastDirection;
     int m_iButtonZ;
     uint8_t m_iCurrentLevel;
     unsigned long m_lLastTime;
@@ -47,7 +49,7 @@ protected:
     virtual void GameCalculate() = 0;
 };
 
-// derived class for Tetris game. Complete CLedGame_Tetris.cpp by adding remaining methods RefreshAnimation() and GameCalculate()
+// derived class for Tetris game. Finish CLedGame_Tetris.cpp by adding remaining methods RefreshAnimation() and GameCalculate()
 class CLedGameTetris : public CLedGame
 {
 public:
@@ -90,9 +92,19 @@ class CLedGameSnake : public CLedGame
 {
 public:
     CLedGameSnake(uint8_t csPin, uint8_t iNumDevices, uint8_t iPinAxisX, uint8_t iPinAxisY, uint8_t iPinButton) : CLedGame(csPin, iNumDevices, iPinAxisX, iPinAxisY, iPinButton)
-    { };
+    {
+        m_Snake = new LinkedList<CoordinateXY*>();
+        m_lastDirection = EDirection::Left;     //default initial direction
+        SetNewEgg();                            //implicitly start with level 1
+        ResetGame();
+    };
 
-private:    
+private:
+    LinkedList<CoordinateXY*>* m_Snake;
+    CoordinateXY m_Egg;
     virtual void RefreshAnimation();
     virtual void GameCalculate();
+    void SetNextSnakePos(EDirection direction);
+    void SetNewEgg();
+    void ResetGame();
 };

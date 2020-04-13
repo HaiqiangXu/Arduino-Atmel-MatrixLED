@@ -27,7 +27,7 @@ void setup()
 #ifdef GAME
     #ifdef DEBUG
         Serial.begin(9600);
-        Serial.println("Debugging LM Game");
+        Serial.println("Debugging Led Matrix game");
     #endif
 
     #ifdef GAME_TETRIS    
