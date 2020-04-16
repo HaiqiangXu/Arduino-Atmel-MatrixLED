@@ -94,9 +94,8 @@ public:
     CLedGameSnake(uint8_t csPin, uint8_t iNumDevices, uint8_t iPinAxisX, uint8_t iPinAxisY, uint8_t iPinButton) : CLedGame(csPin, iNumDevices, iPinAxisX, iPinAxisY, iPinButton)
     {
         m_Snake = new LinkedList<CoordinateXY*>();
-        m_lastDirection = EDirection::Left;     //default initial direction
-        SetNewEgg();                            //implicitly start with level 1
-        ResetGame();
+        ResetGame();                            //implicitly starts with level 3 with 3 dots for the snake
+        SetNewEgg();
     };
 
 private:
