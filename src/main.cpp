@@ -1,9 +1,9 @@
-#include <main.h>
-
 #ifdef GAME
 #include <CLedGameController.h>
 #elif MARQUEE
 #include <CLedMarquee.h>
+#elif TEST_HW
+#include <main.h>
 #endif
 
 // Type uint8_t is equivalent to unsigned byte/char and it's native/fastest data type for Atmel 8-bit controllers (ATMega 328P). int is signed 16-bit and long signed 32-bit for these MCUs
@@ -17,9 +17,9 @@ const uint8_t NUM_DEVICES = 2;  //number of Matrix leds attached
 const char TEXT[] = "Hello world";
 
 #ifdef GAME
-CLedGameController* m_leds;
+CLedGameController* m_ledsController;
 #elif MARQUEE
-CLedMarquee* m_leds;
+CLedMarquee* m_ledsController;
 #endif
 
 void setup()
@@ -31,11 +31,10 @@ void setup()
     #endif
 
     #ifdef GAME_TETRIS    
-        m_leds = new CLedGameController(CS_PIN, NUM_DEVICES, IN_AXIS_X, IN_AXIS_Y, IN_BUTTON, EGame::Tetris);
+        m_ledsController = new CLedGameController(CS_PIN, NUM_DEVICES, IN_AXIS_X, IN_AXIS_Y, IN_BUTTON, EGame::Tetris);
     #elif GAME_SNAKE
-        m_leds = new CLedGameController(CS_PIN, NUM_DEVICES, IN_AXIS_X, IN_AXIS_Y, IN_BUTTON, EGame::Snake);
+        m_ledsController = new CLedGameController(CS_PIN, NUM_DEVICES, IN_AXIS_X, IN_AXIS_Y, IN_BUTTON, EGame::Snake);
     #endif
-
 #elif MARQUEE
     #ifdef DEBUG
         Serial.begin(9600);
@@ -43,14 +42,14 @@ void setup()
     #endif
 
     #ifdef MARQUEE_TEST
-        m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Test);
+        m_ledsController = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Test);
     #elif MARQUEE_TEXT
-        m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Text);
-        m_leds->SetText(TEXT);
+        m_ledsController = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Text);
+        m_ledsController->SetText(TEXT);
     #elif MARQUEE_PACMAN
-        m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Pacman);
+        m_ledsController = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Pacman);
     #elif MARQUEE_BLINK_EYES
-        m_leds = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::BlinkEyes);
+        m_ledsController = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::BlinkEyes);
     #endif
 #endif
 }
@@ -58,8 +57,8 @@ void setup()
 void loop()
 {
 #ifdef GAME
-    m_leds->StartGame();
+    m_ledsController->StartGame();
 #elif MARQUEE
-    m_leds->ShowMarquee();
+    m_ledsController->ShowMarquee();
 #endif
 }

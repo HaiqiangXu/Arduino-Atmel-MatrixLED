@@ -22,7 +22,9 @@ void CLedGame::StartGame()
     if (millis() - m_lLastTime >= TIME_TO_POWER_DOWN)
     {
         digitalWrite(LED_BUILTIN, HIGH);
+        m_leds->clear();
         Common.PowerDownInt0();
+        m_lLastTime = millis();     //it's important to reset the counter after wake up!
         digitalWrite(LED_BUILTIN, LOW);
     }
 }

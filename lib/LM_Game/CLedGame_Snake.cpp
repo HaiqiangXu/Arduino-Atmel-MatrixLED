@@ -5,6 +5,7 @@ void CLedGameSnake::RefreshAnimation()
 {
     CoordinateXY* currItem;
 
+    m_leds->clear();
     m_leds->update(MD_MAX72XX::OFF);
     for (uint8_t i = 0; i < m_iCurrentLevel; i++)
     {
@@ -18,7 +19,6 @@ Serial.println("x " + String(i) + ": " + String(currItem->x) + " | y" + String(i
     m_leds->update(MD_MAX72XX::ON);
 
     delay(300);         //this delay can be dynamic by regulating speed according to difficulty level
-    m_leds->clear();
 }
 
 void CLedGameSnake::GameCalculate()
@@ -54,6 +54,38 @@ Serial.println(". Set direction: " + String((int)m_lastDirection));
 #endif
 }
 
+void CLedGameSnake::ResetGame()
+{
+    CoordinateXY* item;
+    for (uint8_t i = 0; i < m_Snake->size(); i++)
+    {
+        item = m_Snake->shift();            //destroy all objects inside list
+        delete item;
+    }
+    m_Snake->clear();
+    m_iCurrentLevel = 3;                    //default level
+    m_lastDirection = EDirection::Left;     //default initial direction
+
+#ifdef DEBUG
+    m_Snake->add(new CoordinateXY { 4, 12 });
+    m_Snake->add(new CoordinateXY { 4, 11 });
+    m_Snake->add(new CoordinateXY { 4, 10 });
+#else
+    item = new CoordinateXY { 4, TrueRandom.random((COL_SIZE * m_iNumDevices) - 3) };
+    m_Snake->add(item);
+    if (TrueRandom.random(2) == 0l)
+    {
+        m_Snake->add(new CoordinateXY {(item->x) + 1, item->y});
+        m_Snake->add(new CoordinateXY {(item->x) + 2, item->y});
+    }
+    else
+    {
+        m_Snake->add(new CoordinateXY {item->x, (item->y) - 1});
+        m_Snake->add(new CoordinateXY {item->x, (item->y) - 2});
+    }
+#endif
+}
+
 // Private methods
 void CLedGameSnake::SetNewEgg()
 {
@@ -80,7 +112,6 @@ void CLedGameSnake::SetNewEgg()
         }
     } while (!bIsOk);
 #endif
-    m_iCurrentLevel++;
 }
 
 void CLedGameSnake::SetNextSnakePos(EDirection direction)
@@ -120,6 +151,7 @@ void CLedGameSnake::SetNextSnakePos(EDirection direction)
     {
         m_Snake->add(lastItem);
         SetNewEgg();
+        m_iCurrentLevel++;
     }
     else
     {
@@ -147,36 +179,4 @@ void CLedGameSnake::SetNextSnakePos(EDirection direction)
     {
         ResetGame();
     }
-}
-
-void CLedGameSnake::ResetGame()
-{
-    CoordinateXY* item;
-    for (uint8_t i = 0; i < m_Snake->size(); i++)
-    {
-        item = m_Snake->shift();            //destroy all objects inside list
-        delete item;
-    }
-    m_Snake->clear();
-    m_iCurrentLevel = 3;                    //default level
-    m_lastDirection = EDirection::Left;     //default initial direction
-
-#ifdef DEBUG
-    m_Snake->add(new CoordinateXY { 4, 12 });
-    m_Snake->add(new CoordinateXY { 4, 11 });
-    m_Snake->add(new CoordinateXY { 4, 10 });
-#else
-    item = new CoordinateXY { 4, TrueRandom.random((COL_SIZE * m_iNumDevices) - 3) };
-    m_Snake->add(item);
-    if (TrueRandom.random(2) == 0l)
-    {
-        m_Snake->add(new CoordinateXY {(item->x) + 1, item->y});
-        m_Snake->add(new CoordinateXY {(item->x) + 2, item->y});
-    }
-    else
-    {
-        m_Snake->add(new CoordinateXY {item->x, (item->y) - 1});
-        m_Snake->add(new CoordinateXY {item->x, (item->y) - 2});
-    }
-#endif
 }

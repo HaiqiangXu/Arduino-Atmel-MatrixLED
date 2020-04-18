@@ -47,6 +47,7 @@ protected:
     void ReadUserControls();
     virtual void RefreshAnimation() = 0;   //pure virtual function -> to be implemented in the derived classes
     virtual void GameCalculate() = 0;
+    virtual void ResetGame() = 0;
 };
 
 // derived class for Tetris game. Finish CLedGame_Tetris.cpp by adding remaining methods RefreshAnimation() and GameCalculate()
@@ -85,6 +86,7 @@ private:
     // private methods
     virtual void RefreshAnimation();
     virtual void GameCalculate();
+    virtual void ResetGame();
 };
 
 // derived class for Snake game. Finish CLedGame_Snake.cpp by adding remaining methods RefreshAnimation() and GameCalculate()
@@ -103,7 +105,7 @@ private:
     CoordinateXY m_Egg;
     virtual void RefreshAnimation();
     virtual void GameCalculate();
+    virtual void ResetGame();
     void SetNextSnakePos(EDirection direction);
     void SetNewEgg();
-    void ResetGame();
 };
