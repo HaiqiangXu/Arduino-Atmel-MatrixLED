@@ -7,15 +7,14 @@ Software for Arduino Uno/Nano to control 8x8 dot matrix LED based on MAX7219 ICs
 ## Features
 - Configurable matrix size by attaching multiple LED Matrixes
 - Configurable marquees and animations to display
-- Interactive games using joystick: Tetris and Snake
+- Interactive games using joystick: Snake and Tetris
 
 ### Hardware components used for Led Cube
 
 - Arduino [Uno](https://store.arduino.cc/arduino-uno-rev3)/[Nano](https://store.arduino.cc/arduino-nano) or compatible
 - 8x8 dot matrix LEDs model 1088AS with MAX7219 in [FC-16](https://majicdesigns.github.io/MD_MAX72XX/page_f_c16.html) boards
 - Battery or USB powerbank [ 5V,  +2000 mAh ]
-- Optional joystick analog 2-Axis with button for interaction
-- Optional dip switch to turn on/off the cube
+- Joystick analog 2-Axis with button for interaction with games
 
 ### Software structure
 
@@ -51,8 +50,15 @@ Arduino-Generic-Libraries
 |  |--MD_MAX72XX
 |  |--LowerPower
 |  |--TrueRandom
+|  |--LinkedList
 ```
 
-### **TODO**: electrical schematics
+### Electrical schematics
+[Fritzing Schematics](doc/sketch.fzz)
+<br/>
+<img src="doc/img/schematics.png" width="20%" alt="2leds_matrix">
 
-### **TODO**: Build photos
+### Build/assembly photos
+| **Two-matrix leds backpart** | **Assembly for Snake game** |
+| ----------- | ------------------- |
+| <img src="doc/img/fc-16_2leds_matrix.jpg" width="40%" alt="2leds_matrix"> | <img src="doc/img/snake_assembly.jpg" width="20%" alt="Snake_assembly"> |
