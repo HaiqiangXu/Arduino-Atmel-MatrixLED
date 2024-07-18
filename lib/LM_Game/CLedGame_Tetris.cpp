@@ -1,3 +1,5 @@
+#ifdef GAME
+
 #include "CLedGame.h"
 
 // Protected methods
@@ -37,3 +39,5 @@ void CLedGameTetris::GameCalculate()
         m_state = EState::S_SHOW;
     }
 }
+
+#endif

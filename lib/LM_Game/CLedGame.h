@@ -1,8 +1,11 @@
+#ifdef GAME
+
 #include <LinkedList.h>
 #include <MD_MAX72xx.h>
 #include <TrueRandom.h>
 #include <CCommon.h>
 #include <CJoystick.h>
+#include <CAtmelPower.h>
 
 const unsigned long TIME_TO_POWER_DOWN = 60000;     //1 minute
 const uint8_t MAX_SNAKE_LENGTH = 16;
@@ -15,7 +18,7 @@ public:
     CLedGame(uint8_t csPin, uint8_t iNumDevices, uint8_t iPinAxisX, uint8_t iPinAxisY, uint8_t iPinButton)
     {
         // initialize variables
-        m_leds = new MD_MAX72XX(csPin, iNumDevices);
+        m_leds = new MD_MAX72XX(MD_MAX72XX::FC16_HW, csPin, iNumDevices);
         m_leds->begin();
         m_leds->control(MD_MAX72XX::INTENSITY, MAX_INTENSITY >> 4);
         m_iNumDevices = iNumDevices;
@@ -109,3 +112,5 @@ private:
     void SetNextSnakePos(EDirection direction);
     void SetNewEgg();
 };
+
+#endif

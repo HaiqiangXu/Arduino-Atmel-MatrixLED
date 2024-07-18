@@ -1,5 +1,15 @@
 #include "CLedMarquee.h"
 
+#define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
+const int MAX_FRAMES = 4;
+const uint8_t PROGMEM pacman[MAX_FRAMES][18] =  // ghost pursued by a pacman. Matrix of 4 rows * 18 cols. Don't use Warparound as the characters are intended to exit the display area
+{
+    { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0x7e, 0xff, 0xe7, 0xc3, 0x81, 0x00 },
+    { 0xfe, 0x7b, 0xf3, 0x7f, 0xfb, 0x73, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xe7, 0xe7, 0x42, 0x00 },
+    { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xe7, 0x66, 0x24 },
+    { 0xfe, 0x7b, 0xf3, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xff, 0x7e, 0x3c },
+};
+
 #pragma region Public methods
 
 void CLedMarquee::ShowMarquee()
@@ -11,7 +21,6 @@ void CLedMarquee::ShowMarquee()
             if (m_iNumDevices == 1)
                 TestsOneDevice();
             TestsAdvanced();
-            TestsTransformations();
             delay(DELAY_TIME * 4);
             break;
 
@@ -21,11 +30,6 @@ void CLedMarquee::ShowMarquee()
 
         case EMarqueeStyle::Pacman:
             this->ShowPacman();
-            break;
-
-        case EMarqueeStyle::BlinkEyes:
-            // limited to first 2 devices
-            this->BlinkEyes();
             break;
 
         default:
@@ -60,7 +64,7 @@ void CLedMarquee::TestsOneDevice()
     m_leds->clear();
     for (i = 0; i < m_leds->getColumnCount(); i++)  // getColumnCount() returns (m_iNumDevices * COL_SIZE)
     {
-        m_leds->drawHLine(i, i, m_leds->getColumnCount() - ROW_SIZE + i, true);
+        //m_leds->drawHLine(i, i, m_leds->getColumnCount() - ROW_SIZE + i, true);
         if (digitalRead(IN_BTN) == LOW)
             break;
         else
@@ -71,7 +75,7 @@ void CLedMarquee::TestsOneDevice()
     m_leds->clear();
     for (i = 0; i < m_leds->getColumnCount(); i++)
     {
-        m_leds->drawVLine(i, 0, i % ROW_SIZE, true);
+        //m_leds->drawVLine(i, 0, i % ROW_SIZE, true);
         if (digitalRead(IN_BTN) == LOW)
             break;
         else
@@ -111,7 +115,7 @@ void CLedMarquee::TestsOneDevice()
         // cumulate rectangles from outside to inside
         for (j = 0; j < ROW_SIZE / 2; j++)
         {
-            m_leds->drawRectangle(j, j, ROW_SIZE - 1 - j, m_leds->getColumnCount() - 1 - j, true);
+            //m_leds->drawRectangle(j, j, ROW_SIZE - 1 - j, m_leds->getColumnCount() - 1 - j, true);
             delay(DELAY_TIME * 2);
         }
         if (digitalRead(IN_BTN) == LOW)
@@ -120,7 +124,7 @@ void CLedMarquee::TestsOneDevice()
         // clear rectangles from outside to inside
         for (j = 0; j < ROW_SIZE / 2; j++)
         {
-            m_leds->drawRectangle(j, j, ROW_SIZE - 1 - j, m_leds->getColumnCount() - 1 - j, false);
+            //m_leds->drawRectangle(j, j, ROW_SIZE - 1 - j, m_leds->getColumnCount() - 1 - j, false);
             delay(DELAY_TIME * 2);
         }
         if (digitalRead(IN_BTN) == LOW)
@@ -394,178 +398,12 @@ void CLedMarquee::TestsAdvanced()
     m_leds->control(MD_MAX72XX::SCANLIMIT, MAX_SCANLIMIT);
 }
 
-void CLedMarquee::TestsTransformations()
-{
-    int i;
-
-    /// Demonstrates the use of transform() to move and animate bitmaps on the display
-    uint8_t PROGMEM arrow[COL_SIZE] =
-    {
-        0b00001000, 0b00011100, 0b00111110, 0b01111111, //0x08, 0x1c, 0x3E, 0x7F
-        0b00011100, 0b00011100, 0b00111110, 0b00000000  //0x1c, 0x1c, 0x3E, 0x00
-    };
-    MD_MAX72XX::transformType_t PROGMEM t[] =
-    {
-        MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL,
-        MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL,
-        MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL,
-        MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL,
-        MD_MAX72XX::TFLR,
-        MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR,
-        MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR,
-        MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR,
-        MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR,
-        MD_MAX72XX::TRC,
-        MD_MAX72XX::TSD, MD_MAX72XX::TSD, MD_MAX72XX::TSD, MD_MAX72XX::TSD,
-        MD_MAX72XX::TSD, MD_MAX72XX::TSD, MD_MAX72XX::TSD, MD_MAX72XX::TSD,
-        MD_MAX72XX::TFUD,
-        MD_MAX72XX::TSU, MD_MAX72XX::TSU, MD_MAX72XX::TSU, MD_MAX72XX::TSU,
-        MD_MAX72XX::TSU, MD_MAX72XX::TSU, MD_MAX72XX::TSU, MD_MAX72XX::TSU,
-        MD_MAX72XX::TINV,
-        MD_MAX72XX::TRC, MD_MAX72XX::TRC, MD_MAX72XX::TRC, MD_MAX72XX::TRC,
-        MD_MAX72XX::TINV
-    };
-
-    // set the arrow bitmap in the matrix's buffer
-    m_leds->clear();
-    m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
-    for (i = 0; i < m_leds->getDeviceCount(); i++)
-    {
-        m_leds->setBuffer(((i + 1) * COL_SIZE) - 1, COL_SIZE, arrow);
-    }
-    m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);        //it provokes a refresh of the display
-    delay(DELAY_TIME);
-
-    // run through all in-table transformations and apply them to the arrow bitmap
-    m_leds->control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::ON);    //equivalent to m_leds->wraparound(MD_MAX72XX::ON). Goes with transform() to update/apply the transformation and avoid object lose into another device
-    for (i = 0; i < (sizeof(t) / sizeof(t[0])); i++)
-    {
-        m_leds->transform(t[i]);
-        if (digitalRead(IN_BTN) == LOW)
-            break;
-        else
-            delay(DELAY_TIME * 3);
-    }
-    m_leds->control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::OFF);
-
-
-    /// Display text ('W') and animate scrolling using auto wraparound of the buffer
-    m_leds->clear();
-    m_leds->wraparound(MD_MAX72XX::ON);
-    // draw the char to show
-    for (i = 0; i < m_leds->getDeviceCount(); i++)
-    {
-        m_leds->setChar((COL_SIZE / 2) + (m_leds->getMaxFontWidth() / 3), (i & 1 ? 'M' : 'W')); //alternate between 'M' and 'W' through alternate devices
-    }
-    delay(DELAY_TIME * 4);
-
-    // run through some transformations
-    for (i = 0; i < (3 * COL_SIZE * m_iNumDevices); i++)
-    {
-        m_leds->transform(MD_MAX72XX::TSL);
-        if (digitalRead(IN_BTN) == LOW)
-            break;
-        else
-            delay(DELAY_TIME / 2);
-    }
-    for (i = 0; i < (3 * COL_SIZE * m_iNumDevices); i++)
-    {
-        m_leds->transform(MD_MAX72XX::TSR);
-        if (digitalRead(IN_BTN) == LOW)
-            break;
-        else
-            delay(DELAY_TIME / 2);
-    }
-    for (i = 0; i < (2 * ROW_SIZE); i++)
-    {
-        if (i / 4 == 0)
-            m_leds->transform(MD_MAX72XX::TSU);
-        else
-            m_leds->transform(MD_MAX72XX::TSD);
-
-        if (digitalRead(IN_BTN) == LOW)
-            break;
-        else
-            delay(DELAY_TIME * 2);
-    }
-    m_leds->wraparound(MD_MAX72XX::OFF);
-
-    /// Demonstrates the use of transform() to move animate font characters on the display.
-    MD_MAX72XX::transformType_t PROGMEM t1[]
-    {
-        MD_MAX72XX::TINV,
-        MD_MAX72XX::TRC, MD_MAX72XX::TRC, MD_MAX72XX::TRC, MD_MAX72XX::TRC,
-        MD_MAX72XX::TINV,
-        MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL,
-        MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR,
-        MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR,
-        MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL,
-        MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR,
-        MD_MAX72XX::TSD, MD_MAX72XX::TSU, MD_MAX72XX::TSD, MD_MAX72XX::TSU,
-        MD_MAX72XX::TFLR, MD_MAX72XX::TFLR, MD_MAX72XX::TFUD, MD_MAX72XX::TFUD
-    };
-
-    // draw character that will show transformations
-    m_leds->clear();
-    for (i = 0; i < m_leds->getDeviceCount(); i++)
-        m_leds->setChar(((i + 1) * COL_SIZE) - 1, '0' + i);
-    delay(DELAY_TIME);
-
-    // run through all in-table transformations
-    m_leds->wraparound(MD_MAX72XX::ON);
-    for (i = 0; i < ARRAY_SIZE(t1); i++)
-    {
-        m_leds->transform(t1[i]);
-        if (digitalRead(IN_BTN) == LOW)
-            break;
-        else
-            delay(DELAY_TIME * 3);
-    }
-    m_leds->wraparound(MD_MAX72XX::OFF);
-
-    /// more transformation example with 'o' character
-    m_leds->control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::ON);
-    for (i = 0; i < 8; i++)
-    {
-        // switch between the 7 possible transformations
-        m_leds->clear();
-        for (int j = 0; j < m_iNumDevices; j++)
-            m_leds->setChar(((j + 1) * COL_SIZE) - 1, 'o' + j);
-
-        switch (i)
-        {
-            case 0: m_leds->transform(0, m_iNumDevices - 1, MD_MAX72XX::TSL);  break;
-            case 1:	m_leds->transform(0, m_iNumDevices - 1, MD_MAX72XX::TSR);  break;
-            case 2:	m_leds->transform(0, m_iNumDevices - 1, MD_MAX72XX::TSU);  break;
-            case 3:	m_leds->transform(0, m_iNumDevices - 1, MD_MAX72XX::TSD);  break;
-            case 4:	m_leds->transform(0, m_iNumDevices - 1, MD_MAX72XX::TFUD); break;
-            case 5:	m_leds->transform(0, m_iNumDevices - 1, MD_MAX72XX::TFLR); break;
-            case 6:	m_leds->transform(0, m_iNumDevices - 1, MD_MAX72XX::TRC);  break;
-            case 7:	m_leds->transform(0, m_iNumDevices - 1, MD_MAX72XX::TINV); break;
-        }
-        if (digitalRead(IN_BTN) == LOW)
-            break;
-        else
-            delay(DELAY_TIME * 4);
-    }
-    m_leds->control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::OFF);
-}
-
 void CLedMarquee::ShowPacman()
 {
-    //TODO: try to use the animation engine of CLedEyes engine.
     static int idx;                        // display index (column). Static means this value is kept for the next iteration of main.loop()
     static int frame;                      // current animation frame
     static int deltaFrame; 
     static boolean bInit = true;
-    const int MAX_FRAMES = 4;
-    const uint8_t PROGMEM pacman[MAX_FRAMES][18] =  // ghost pursued by a pacman. Matrix of 4 rows * 18 cols. Don't use Warparound as the characters are intended to exit the display area
-    {
-        { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0x7e, 0xff, 0xe7, 0xc3, 0x81, 0x00 },
-        { 0xfe, 0x7b, 0xf3, 0x7f, 0xfb, 0x73, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xe7, 0xe7, 0x42, 0x00 },
-        { 0xfe, 0x73, 0xfb, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xe7, 0x66, 0x24 },
-        { 0xfe, 0x7b, 0xf3, 0x7f, 0xf3, 0x7b, 0xfe, 0x00, 0x00, 0x00, 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xff, 0x7e, 0x3c },
-    };
     const uint8_t DATA_WIDTH = (sizeof(pacman[0]) / sizeof(pacman[0][0]));
 
     m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
@@ -666,69 +504,6 @@ if (curLen >= showLen)
     }
     m_leds->control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
     delay(DELAY_TIME * 2);
-}
-
-void CLedMarquee::BlinkEyes()
-{
-    typedef struct
-    {
-        emotion_t emotion;
-        uint16_t timePause;  // show emotion in milliseconds
-    } sampleItem_t;
-
-    const sampleItem_t eSeq[] =
-    {
-        { E_NEUTRAL, 10000 },
-        { E_BLINK, 1000 },
-        { E_WINK, 1000 },
-        { E_LOOK_L, 1000 },
-        { E_LOOK_R, 1000 },
-        { E_LOOK_U, 1000 },
-        { E_LOOK_D, 1000 },
-        { E_ANGRY, 1000 },
-        { E_SAD, 1000 },
-        { E_EVIL, 1000 },
-        { E_EVIL2, 1000 },
-        { E_SQUINT, 1000 },
-        { E_DEAD, 1000 },
-        { E_SCAN_UD, 1000 },
-        { E_SCAN_LR, 1000 },
-    };
-    static enum { S_IDLE,
-                  S_ANIM,
-                  S_PAUSE } state = S_IDLE;
-    static uint32_t timeStartDelay;
-    static uint8_t index = ARRAY_SIZE(eSeq);
-
-    bool b = m_eyes->runAnimation();    // always run the animation
-    switch (state)
-    {
-        case S_IDLE:
-            index++;
-            if (index >= ARRAY_SIZE(eSeq)) 
-                index = 0;
-            //change emotion each time previous one has finished    
-            m_eyes->setAnimation(eSeq[index].emotion, true);
-            state = S_ANIM;
-            break;
-
-        case S_ANIM:    // checking animation is completed
-            if (b)      // animation is finished
-            {
-                timeStartDelay = millis();
-                state = S_PAUSE;
-            }
-            break;
-
-        case S_PAUSE:   // non blocking waiting for a period between animations
-            if (millis() - timeStartDelay >= eSeq[index].timePause)
-                state = S_IDLE;
-            break;
-
-        default:
-            state = S_IDLE;
-            break;
-    }
 }
 
 #pragma endregion

@@ -15,7 +15,7 @@ public:
     CLedWeather(uint8_t csPin, uint8_t iNumDevices, uint8_t iPinAxisX, uint8_t iPinAxisY, uint8_t iPinButton)
     {
         // initialize variables
-        m_leds = new MD_MAX72XX(csPin, iNumDevices);
+        m_leds = new MD_MAX72XX(MD_MAX72XX::FC16_HW, csPin, iNumDevices);
         m_leds->begin();
         m_iNumDevices = iNumDevices;
 

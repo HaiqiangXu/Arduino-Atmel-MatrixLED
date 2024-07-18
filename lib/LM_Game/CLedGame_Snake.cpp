@@ -1,3 +1,5 @@
+#ifdef GAME
+
 #include "CLedGame.h"
 
 // Protected derived virtual methods
@@ -180,3 +182,5 @@ void CLedGameSnake::SetNextSnakePos(EDirection direction)
         ResetGame();
     }
 }
+
+#endif

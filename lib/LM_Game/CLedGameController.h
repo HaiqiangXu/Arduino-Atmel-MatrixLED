@@ -1,3 +1,5 @@
+#ifdef GAME
+
 #include "CLedGame.h"
 
 enum class EGame { Tetris, Snake };
@@ -39,3 +41,5 @@ private:
     CLedGame* m_ledGame;
     EGame m_currentGame;
 };
+
+#endif

@@ -1,3 +1,5 @@
+#ifdef GAME
+
 #include "CLedGame.h"
 
 #pragma region Public methods
@@ -23,7 +25,7 @@ void CLedGame::StartGame()
     {
         digitalWrite(LED_BUILTIN, HIGH);
         m_leds->clear();
-        Common.PowerDownInt0();
+        AtmelPower.PowerDownInt0();
         m_lLastTime = millis();     //it's important to reset the counter after wake up!
         digitalWrite(LED_BUILTIN, LOW);
     }
@@ -45,3 +47,5 @@ void CLedGame::ReadUserControls()
     m_lastDirectionX = m_joystick->GetDirectionX();
     m_lastDirectionY = m_joystick->GetDirectionY();
 }
+
+#endif
