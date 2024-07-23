@@ -11,6 +11,8 @@
 // const uint8_t DATA_PIN = D11;   //MOSI [Master Out Slave In]: 11
 #ifdef IS_ATMEL
 const uint8_t CS_PIN = 10;      //SS   [Slave Select]:        10
+#elif IS_ESP32
+const uint8_t CS_PIN = SS;
 #else
 const uint8_t CS_PIN = D10;
 #endif
@@ -45,8 +47,8 @@ void setup()
         Serial.println("Debugging LM Marquee");
     #endif
 
-        m_ledsController = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Test);
-        m_ledsController->SetText(TEXT);
+    m_ledsController = new CLedMarquee(CS_PIN, NUM_DEVICES, EMarqueeStyle::Test);
+    m_ledsController->SetText(TEXT);
 
 #endif
 }
