@@ -7,7 +7,7 @@ Software for Arduino Uno/Nano to control 8x8 dot matrix LED based on MAX7219 ICs
 ## Features
 - Configurable matrix size by attaching multiple LED Matrixes
 - Configurable marquees and animations to display
-- Interactive games using joystick: Snake and Tetris
+- Interactive games using joystick: Snake~~ and Tetris~~
 
 ### Hardware components used for Led Cube
 
@@ -35,9 +35,6 @@ Arduino-Matrix-LED
 |  |  |- CLedMarquee.h
 |  |  |- CLedEyes.cpp
 |  |  |- CLedEyes.h
-|  |--LM_WeatherStation
-|  |  |- CLedWeather.cpp
-|  |  |- CLedWeather.h
 |--src
 |  |- main.cpp
 |  |- main.h
